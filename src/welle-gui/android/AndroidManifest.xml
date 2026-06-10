@@ -50,9 +50,6 @@
         <service android:name="org.qtproject.qt.android.QtService" android:process=":qt_service">
             <meta-data android:name="android.app.background_running" android:value="true"/>
         </service>
-        <service android:name="org.qtproject.qt.android.QtService" android:process=":qt_service">
-            <meta-data android:name="android.app.background_running" android:value="true"/>
-        </service>
     </application>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
