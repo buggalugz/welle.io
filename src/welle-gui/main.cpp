@@ -63,6 +63,7 @@ int main(int argc, char** argv)
 
     // Create new QT application
     QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
     qDebug() << "main: Platform name" <<  app.platformName();
 
     //Initialise translation
