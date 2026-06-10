@@ -63,6 +63,9 @@ int main(int argc, char** argv)
 
     // Create new QT application
     QApplication app(argc, argv);
+    // Force memory keepalive state
+    qputenv("QT_ANDROID_LOW_POWER_COMPLIANT", "0");
+    qputenv("QT_CONTAINER_SANDBOX_LOCKDOWN", "1");
     // Force high-priority foreground service behavior
     qputenv("QT_ANDROID_ENABLE_HW_COORDINATION", "1");
     app.setQuitOnLastWindowClosed(false);
