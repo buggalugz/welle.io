@@ -48,4 +48,6 @@
             <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splash"/>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 </manifest>
