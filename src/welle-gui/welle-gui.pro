@@ -181,3 +181,6 @@ else {
 else {
     warning("BUILD_DATE could not be set.")
 }
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+QT += androidextras
