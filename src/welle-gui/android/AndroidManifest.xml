@@ -26,6 +26,8 @@
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:label="-- %%INSERT_APP_NAME%% --"
             android:launchMode="singleTop"
+            android:stopWithTask="false"
+            android:excludeFromRecents="false"
             android:screenOrientation="unspecified"
             android:exported="true">
             <intent-filter>
