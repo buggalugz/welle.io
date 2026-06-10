@@ -64,7 +64,6 @@ int main(int argc, char** argv)
     // Create new QT application
     QApplication app(argc, argv);
     // Force high-priority foreground service behavior
-    QCoreApplication::setAttribute(Qt::AA_DontUseHighDpiPixmaps);
     qputenv("QT_ANDROID_ENABLE_HW_COORDINATION", "1");
     app.setQuitOnLastWindowClosed(false);
     qDebug() << "main: Platform name" <<  app.platformName();
