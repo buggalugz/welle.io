@@ -52,5 +52,6 @@
         <service android:name="org.qtproject.qt.android.QtService" android:process=":qt_service">
             <meta-data android:name="android.app.background_running" android:value="true"/>
         </service>
+        <meta-data android:name="com.samsung.android.keepalive" android:value="true"/>
     </application>
 </manifest>
