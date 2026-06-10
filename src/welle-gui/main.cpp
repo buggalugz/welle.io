@@ -63,6 +63,8 @@ int main(int argc, char** argv)
 
     // Create new QT application
     QApplication app(argc, argv);
+    // Decouple event loops from visual layers
+    QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     // Force memory keepalive state
     qputenv("QT_ANDROID_LOW_POWER_COMPLIANT", "0");
     qputenv("QT_CONTAINER_SANDBOX_LOCKDOWN", "1");
