@@ -246,7 +246,6 @@ jobs:
                     # need to symlink /etc/mtab to work around a fusermount(1) deficiency (copied from /usr/lib/python3/dist-packages/reprotest/presets.py)
                     test -c /dev/fuse || mknod -m 666 /dev/fuse c 10 229
                     test -f /etc/mtab || ln -s ../proc/self/mounts /etc/mtab
-          find . -name "gradle.properties" -exec sh -c 'echo "android.aapt2Version=8.6.1-11315950" >> {}' \;
                     mkdir -p ${HOME}/cmdline-tools
                     fuse-zip -r $ANDROID_SDK_CMDLINE_TOOLS_ZIP ${HOME}/cmdline-tools
 
@@ -278,7 +277,6 @@ jobs:
                 # need to symlink /etc/mtab to work around a fusermount(1) deficiency (copied from /usr/lib/python3/dist-packages/reprotest/presets.py)
                 test -c /dev/fuse || mknod -m 666 /dev/fuse c 10 229
                 test -f /etc/mtab || ln -s ../proc/self/mounts /etc/mtab
-          find . -name "gradle.properties" -exec sh -c 'echo "android.aapt2Version=8.6.1-11315950" >> {}' \;
                 mkdir -p $ANDROID_NDK_MOUNT_DIR
                 fuse-zip -r $ANDROID_NDK_ZIP $ANDROID_NDK_MOUNT_DIR
 
@@ -325,7 +323,6 @@ jobs:
               -DCMAKE_VERBOSE_MAKEFILE=ON \
               "${ARGS[@]}" \
               -S .. -B .
-          find . -name "gradle.properties" -exec sh -c 'echo "android.aapt2Version=8.6.1-11315950" >> {}' \;
 
       - name: Build apk
         id: build_apk
@@ -339,11 +336,15 @@ jobs:
             cp build/android-build/build/outputs/apk/*/*.apk publish/${DATE}_${LAST_COMMIT_HASH}_Android_welle-io.apk
             find publish/
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload to nightly server
+        if: always() && steps.build_apk.outcome == 'success'
+        uses: dennisameling/ftp-upload-action@v1
         with:
-          name: welle-io-s23-optimized
-          path: "publish/*.apk"
+          server: a2f24.netcup.net # welle-io-nightlies.albrechtloh.de is redirected to here
+          secure: true
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          local_dir: publish/
 
       - name: Build with qmake
         id: build_apk_qmake
@@ -355,11 +356,9 @@ jobs:
             cd qmake-build
             ${QT_INSTALL_BINDIR}/qmake \
               ../welle.io.pro
-          find . -name "gradle.properties" -exec sh -c 'echo "android.aapt2Version=8.6.1-11315950" >> {}' \;
 
             make V=1 apk
             cd ..
-          find . -name "gradle.properties" -exec sh -c 'echo "android.aapt2Version=8.6.1-11315950" >> {}' \;
 
             ls -al qmake-build/src/welle-gui/android-build/build/outputs/apk/debug/android-build-debug.apk
 
