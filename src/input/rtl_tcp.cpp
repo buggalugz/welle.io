@@ -350,7 +350,7 @@ void CRTL_TCP_Client::sendCommand(uint8_t cmd, int32_t param)
     sock.send(datagram.data(), datagram.size(), 0);
 }
 
-void CRTL_TCP_Client::sendVFO(int32_t frequency)
+void CRTL_TCP_Client::sendVFO(uint32_t frequency)
 {
     sendCommand(0x01, static_cast<uint32_t>(frequency));
 }
@@ -575,7 +575,7 @@ void CRTL_TCP_Client::agcTimer(void)
     }
 }
 
-float CRTL_TCP_Client::getGainValue(uint16_t gainCount)
+float CRTL_TCP_Client::getGainValue(uint32_t gainCount)
 {
     float gainValue = 0;
 
