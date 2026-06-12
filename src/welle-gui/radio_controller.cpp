@@ -538,7 +538,8 @@ void CRadioController::setGain(int Gain)
         currentManualGainValue = device->setGain(Gain);
         emit gainValueChanged(currentManualGainValue);
 
-        uint32_t gainCount_tmp = device->getGainCount();
+        int32_t gainCount_tmp = device->getGainCount();
+
 
         if(gainCount != gainCount_tmp) {
             gainCount = gainCount_tmp;
