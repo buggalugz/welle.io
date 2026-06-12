@@ -272,7 +272,7 @@ void CRadioController::stop()
         device->stop();
     }
     else
-        throw std::runtime_error("device is null in file " + std::string(__FILE__) +":"+ std::to_string(__LINE__));
+        throw std::runtime_error("device is null");
 
     QString title = currentTitle;
     resetTechnicalData();
@@ -293,13 +293,11 @@ void CRadioController::stop()
     );
 
     if (activity.isValid()) {
-        // Create an intent to start our Java service
         QJniObject intent("android/content/Intent", 
                           "(Landroid/content/Context;Ljava/lang/Class;)V",
                           activity.object(),
                           QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
 
-        // Launch the service as a Foreground Service
         activity.callObjectMethod(
             "startForegroundService", 
             "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
@@ -307,6 +305,8 @@ void CRadioController::stop()
         );
     }
     #endif
+}
+
 }
 
 void CRadioController::setService(uint32_t service, bool force)
@@ -431,7 +431,6 @@ void CRadioController::setManualChannel(QString Channel)
 void CRadioController::startScan(void)
 {
     #ifdef Q_OS_ANDROID
-    // Get the current Android Activity context
     QJniObject activity = QJniObject::callStaticObjectMethod(
         "org/qtproject/qt/android/QtNative", 
         "activity", 
@@ -439,19 +438,58 @@ void CRadioController::startScan(void)
     );
 
     if (activity.isValid()) {
-        // Create an intent to start our Java service
         QJniObject intent("android/content/Intent", 
                           "(Landroid/content/Context;Ljava/lang/Class;)V",
                           activity.object(),
                           QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
 
-        // Launch the service as a Foreground Service
         activity.callObjectMethod(
             "startForegroundService", 
             "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
             intent.object()
         );
     }
+    #endif
+
+    qDebug() << "RadioController:" << "Start channel scan";
+
+    stop();
+    deviceRestart();
+
+    if(device && device->getID() == CDeviceID::RAWFILE) {
+        currentTitle = tr("RAW File");
+        const auto FirstChannel = QString::fromStdString(Channels::firstChannel);
+        setChannel(FirstChannel, false);
+        emit scanStopped();
+    }
+    else
+    {
+        QString Channel = QString::fromStdString(Channels::firstChannel);
+        setChannel(Channel, true);
+
+        isChannelScan = true;
+        emit isChannelScanChanged(isChannelScan);
+        stationCount = 0;
+        currentTitle = tr("Scanning") + " ... " + Channel
+                + " (" + QString::number((1 * 100 / NUMBEROFCHANNELS)) + "%)";
+        emit titleChanged();
+
+        currentText = tr("Found channels") + ": " + QString::number(stationCount);
+        emit textChanged();
+
+        currentService = 0;
+        emit stationChanged();
+
+        currentStationType = "";
+        emit stationTypChanged();
+
+        currentLanguageType = "";
+        emit languageTypeChanged();
+
+        emit scanProgress(0);
+    }
+}
+
     #endif
 
     qDebug() << "RadioController:" << "Start channel scan";
