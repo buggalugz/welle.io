@@ -30,6 +30,7 @@
  *
  */
 
+#include <QJniObject>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QSettings>
@@ -282,7 +283,55 @@ void CRadioController::stop()
 
     audio.stop();
     labelTimer.stop();
-}
+
+    #ifdef Q_OS_ANDROID
+    // Get the current Android Activity context
+    QJniObject activity = QJniObject::callStaticObjectMethod(
+        "org/qtproject/qt/android/QtNative", 
+        "activity", 
+        "()Landroid/app/Activity;"
+    );
+
+    if (activity.isValid()) {
+        // Create an intent to start our Java service
+        QJniObject intent("android/content/Intent", 
+                          "(Landroid/content/Context;Ljava/lang/Class;)V",
+                          activity.object(),
+                          QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
+
+        // Launch the service as a Foreground Service
+        activity.callObjectMethod(
+            "startForegroundService", 
+            "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
+            intent.object()
+        );
+    }
+#endif
+
+#ifdef Q_OS_ANDROID
+    // Get the current Android Activity context
+    QJniObject activity = QJniObject::callStaticObjectMethod(
+        "org/qtproject/qt/android/QtNative", 
+        "activity", 
+        "()Landroid/app/Activity;"
+    );
+
+    if (activity.isValid()) {
+        // Create an intent to start our Java service
+        QJniObject intent("android/content/Intent", 
+                          "(Landroid/content/Context;Ljava/lang/Class;)V",
+                          activity.object(),
+                          QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
+
+        // Launch the service as a Foreground Service
+        activity.callObjectMethod(
+            "startForegroundService", 
+            "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
+            intent.object()
+        );
+    }
+#endif
+
 
 void CRadioController::setService(uint32_t service, bool force)
 {
@@ -404,6 +453,30 @@ void CRadioController::setManualChannel(QString Channel)
 }
 
 void CRadioController::startScan(void)
+#ifdef Q_OS_ANDROID
+    // Get the current Android Activity context
+    QJniObject activity = QJniObject::callStaticObjectMethod(
+        "org/qtproject/qt/android/QtNative", 
+        "activity", 
+        "()Landroid/app/Activity;"
+    );
+
+    if (activity.isValid()) {
+        // Create an intent to start our Java service
+        QJniObject intent("android/content/Intent", 
+                          "(Landroid/content/Context;Ljava/lang/Class;)V",
+                          activity.object(),
+                          QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
+
+        // Launch the service as a Foreground Service
+        activity.callObjectMethod(
+            "startForegroundService", 
+            "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
+            intent.object()
+        );
+    }
+#endif
+
 {
     qDebug() << "RadioController:" << "Start channel scan";
 
