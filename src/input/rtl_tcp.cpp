@@ -577,35 +577,36 @@ void CRTL_TCP_Client::agcTimer(void)
     }
 }
 
-    float CRTL_TCP_Client::getGainValue(uint32_t gainCount)
-
+    float CRTL_TCP_Client::getGainValue(int gainCount)
+{
     float gainValue = 0;
 
     if (dongleInfo.tuner_type == RTLSDR_TUNER_UNKNOWN)
         return 0;
 
-    // Get max gain count
-    uint32_t maxGainCount = getGainCount();
-    if (maxGainCount == 0)
+    // Get max gain count as int to match input
+    int maxGainCount = (int)getGainCount();
+    if (maxGainCount <= 0)
         return 0;
 
-    // Check if gainCount is valid
-    if (gainCount < maxGainCount) {
-        // Get gain
+    // Check if gainCount is valid and non-negative
+    if (gainCount >= 0 && gainCount < maxGainCount) {
         switch(dongleInfo.tuner_type) {
-            case RTLSDR_TUNER_E4000: gainValue = e4k_gains[gainCount]; break;
+            case RTLSDR_TUNER_E4000:  gainValue = e4k_gains[gainCount]; break;
             case RTLSDR_TUNER_FC0012: gainValue = fc0012_gains[gainCount]; break;
             case RTLSDR_TUNER_FC0013: gainValue = fc0013_gains[gainCount]; break;
             case RTLSDR_TUNER_FC2580: gainValue = fc2580_gains[gainCount]; break;
-            case RTLSDR_TUNER_R820T: gainValue = r82xx_gains[gainCount]; break;
-            case RTLSDR_TUNER_R828D: gainValue = r82xx_gains[gainCount]; break;
+            case RTLSDR_TUNER_R820T:  gainValue = r820t_gains[gainCount]; break;
+            case RTLSDR_TUNER_R828D:  gainValue = r820t_gains[gainCount]; break;
             default: gainValue = 0;
         }
     }
     else {
-        gainValue = 999.0; // Max gain
+        gainValue = 999.0;
     }
 
     return gainValue;
+}
+
 }
 
