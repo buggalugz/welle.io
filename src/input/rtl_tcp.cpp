@@ -584,12 +584,10 @@ void CRTL_TCP_Client::agcTimer(void)
     if (dongleInfo.tuner_type == RTLSDR_TUNER_UNKNOWN)
         return 0;
 
-    // Get max gain count as int to match input
-    int maxGainCount = (int)getGainCount();
+    int maxGainCount = getGainCount();
     if (maxGainCount <= 0)
         return 0;
 
-    // Check if gainCount is valid and non-negative
     if (gainCount >= 0 && gainCount < maxGainCount) {
         switch(dongleInfo.tuner_type) {
             case RTLSDR_TUNER_E4000:  gainValue = e4k_gains[gainCount]; break;
@@ -607,6 +605,7 @@ void CRTL_TCP_Client::agcTimer(void)
 
     return gainValue;
 }
+
 
 }
 
