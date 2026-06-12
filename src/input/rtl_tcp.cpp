@@ -577,8 +577,8 @@ void CRTL_TCP_Client::agcTimer(void)
     }
 }
 
-float CRTL_TCP_Client::getGainValue(uint32_t gainCount)
-{
+    float CRTL_TCP_Client::getGainValue(int gainCount)
+
     float gainValue = 0;
 
     if (dongleInfo.tuner_type == RTLSDR_TUNER_UNKNOWN)
