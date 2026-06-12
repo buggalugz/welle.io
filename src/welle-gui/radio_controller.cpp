@@ -271,8 +271,9 @@ void CRadioController::stop()
     if (device) {
         device->stop();
     }
-    else
+    else {
         throw std::runtime_error("device is null");
+    }
 
     QString title = currentTitle;
     resetTechnicalData();
@@ -287,146 +288,88 @@ void CRadioController::stop()
     #ifdef Q_OS_ANDROID
     // Get the current Android Activity context
     QJniObject activity = QJniObject::callStaticObjectMethod(
-        "org/qtproject/qt/android/QtNative", 
-        "activity", 
+        "org/qtproject/qt/android/QtNative",
+        "activity",
         "()Landroid/app/Activity;"
     );
 
     if (activity.isValid()) {
-        QJniObject intent("android/content/Intent", 
+        QJniObject intent("android/content/Intent",
                           "(Landroid/content/Context;Ljava/lang/Class;)V",
                           activity.object(),
                           QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
 
         activity.callObjectMethod(
-            "startForegroundService", 
-            "(Landroid/content/Intent;)Landroid/content/ComponentName;", 
+            "startForegroundService",
+            "(Landroid/content/Intent;)Landroid/content/ComponentName;",
             intent.object()
         );
     }
     #endif
 }
 
-}
-
-void CRadioController::setService(uint32_t service, bool force)
+void CRadioController::startScan(void)
 {
-    if (currentService != service or force or isPlaying == false) {
-        currentService = service;
-        autoService = service;
+    #ifdef Q_OS_ANDROID
+    QJniObject activity = QJniObject::callStaticObjectMethod(
+        "org/qtproject/qt/android/QtNative",
+        "activity",
+        "()Landroid/app/Activity;"
+    );
+
+    if (activity.isValid()) {
+        QJniObject intent("android/content/Intent",
+                          "(Landroid/content/Context;Ljava/lang/Class;)V",
+                          activity.object(),
+                          QJniObject::fromString("io/welle/welle/RadioForegroundService").object());
+
+        activity.callObjectMethod(
+            "startForegroundService",
+            "(Landroid/content/Intent;)Landroid/content/ComponentName;",
+            intent.object()
+        );
+    }
+    #endif
+
+    qDebug() << "RadioController:" << "Start channel scan";
+
+    stop();
+    deviceRestart();
+
+    if(device && device->getID() == CDeviceID::RAWFILE) {
+        currentTitle = tr("RAW File");
+        const auto FirstChannel = QString::fromStdString(Channels::firstChannel);
+        setChannel(FirstChannel, false);
+        emit scanStopped();
+    }
+    else
+    {
+        QString Channel = QString::fromStdString(Channels::firstChannel);
+        setChannel(Channel, true);
+
+        isChannelScan = true;
+        emit isChannelScanChanged(isChannelScan);
+        stationCount = 0;
+        currentTitle = tr("Scanning") + " ... " + Channel
+                + " (" + QString::number((1 * 100 / NUMBEROFCHANNELS)) + "%)";
+        emit titleChanged();
+
+        currentText = tr("Found channels") + ": " + QString::number(stationCount);
+        emit textChanged();
+
+        currentService = 0;
         emit stationChanged();
-        emit autoServiceChanged(autoService);
 
-        // Wait if we found the station inside the signal
-        stationTimer.start(1000);
-
-        // Clear old data
         currentStationType = "";
         emit stationTypChanged();
 
         currentLanguageType = "";
         emit languageTypeChanged();
 
-        currentText = "";
-        emit textChanged();
-
-        audioMode = "";
-        emit audioModeChanged(audioMode);
-
-        emit motReseted();
+        emit scanProgress(0);
     }
 }
 
-void CRadioController::setAutoPlay(bool isAutoPlayValue, QString channel, QString service)
-{
-    isAutoPlay = isAutoPlayValue;
-    autoChannel = channel;
-    emit autoChannelChanged(autoChannel);
-    autoService = deserialise_serviceid(service.toStdString().c_str());
-    emit autoServiceChanged(autoService);
-    currentLastChannel = QStringList() << service << channel;
-}
-
-void CRadioController::setVolume(qreal Volume)
-{
-    currentVolume = Volume;
-    audio.setVolume(Volume);
-    emit volumeChanged(currentVolume);
-}
-
-void CRadioController::setChannel(QString Channel, bool isScan, bool Force)
-{
-    if (currentChannel != Channel || Force == true || isPlaying == false) {
-        if (device && device->getID() == CDeviceID::RAWFILE) {
-            currentChannel = "File";
-            if (!isScan)
-                autoChannel = currentChannel;
-            currentEId = 0;
-            currentEnsembleLabel = "";
-            currentFrequency = 0;
-        }
-        else { // A real device
-            if(radioReceiver)
-                radioReceiver->stop(); // Stop the demodulator in order to avoid working with old data
-            currentChannel = Channel;
-            if (!isScan)
-                autoChannel = currentChannel;
-            currentEId = 0;
-            currentEnsembleLabel = "";
-
-            // Convert channel into a frequency
-            currentFrequency = channels.getFrequency(Channel.toStdString());
-
-            if(currentFrequency != 0 && device) {
-                qDebug() << "RadioController: Tune to channel" <<  Channel << "->" << currentFrequency/1e6 << "MHz";
-                device->setFrequency(currentFrequency);
-                device->reset(); // Clear buffer
-            }
-        }
-
-        // Restart demodulator and decoder
-        if(device) {
-            radioReceiver = std::make_unique<RadioReceiver>(*this, *device, rro, 1);
-            radioReceiver->setReceiverOptions(rro);
-            radioReceiver->restart(isScan);
-        }
-
-        emit channelChanged();
-        if (!isScan)
-            emit autoChannelChanged(autoChannel);
-        emit ensembleChanged();
-        emit ensembleIdChanged();
-        emit frequencyChanged();
-    }
-}
-
-void CRadioController::setManualChannel(QString Channel)
-{
-    // Otherwise tune to channel and play first found station
-    qDebug() << "RadioController: Tune to channel" <<  Channel;
-
-    deviceRestart();
-
-    currentTitle = Channel;
-    emit titleChanged();
-
-    currentService = 0;
-    emit stationChanged();
-
-    currentStationType = "";
-    emit stationTypChanged();
-
-    currentLanguageType = "";
-    emit languageTypeChanged();
-
-    currentText = "";
-    emit textChanged();
-
-    emit motReseted();
-
-    // Switch channel
-    setChannel(Channel, false, true);
-}
 
 void CRadioController::startScan(void)
 {
