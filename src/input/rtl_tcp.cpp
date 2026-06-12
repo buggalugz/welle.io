@@ -376,7 +376,7 @@ float CRTL_TCP_Client::setGain(int32_t gain)
     currentGainCount = gain;
     float gainValue = getGainValue(gain);
 
-    sendCommand(0x04, (int)10 * gainValue);
+    sendCommand(0x04, static_cast<uint32_t>((int)10 * gainValue));
 
     currentGain = gainValue;
     return gainValue;
