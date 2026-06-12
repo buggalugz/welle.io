@@ -306,7 +306,8 @@ void CRadioController::stop()
             intent.object()
         );
     }
-#endif
+    #endif
+}
 
 #ifdef Q_OS_ANDROID
     // Get the current Android Activity context
@@ -453,6 +454,7 @@ void CRadioController::setManualChannel(QString Channel)
 }
 
 void CRadioController::startScan(void)
+{
 #ifdef Q_OS_ANDROID
     // Get the current Android Activity context
     QJniObject activity = QJniObject::callStaticObjectMethod(
@@ -475,6 +477,49 @@ void CRadioController::startScan(void)
             intent.object()
         );
     }
+#endif
+
+    qDebug() << "RadioController:" << "Start channel scan";
+
+    stop();
+
+    deviceRestart();
+
+    if(device && device->getID() == CDeviceID::RAWFILE) {
+        currentTitle = tr("RAW File");
+        const auto FirstChannel = QString::fromStdString(Channels::firstChannel);
+        setChannel(FirstChannel, false); // Just a dummy
+        emit scanStopped();
+    }
+    else
+    {
+        // Start with lowest frequency
+        QString Channel = QString::fromStdString(Channels::firstChannel);
+        setChannel(Channel, true);
+
+        isChannelScan = true;
+        emit isChannelScanChanged(isChannelScan);
+        stationCount = 0;
+        currentTitle = tr("Scanning") + " ... " + Channel
+                + " (" + QString::number((1 * 100 / NUMBEROFCHANNELS)) + "%)";
+        emit titleChanged();
+
+        currentText = tr("Found channels") + ": " + QString::number(stationCount);
+        emit textChanged();
+
+        currentService = 0;
+        emit stationChanged();
+
+        currentStationType = "";
+        emit stationTypChanged();
+
+        currentLanguageType = "";
+        emit languageTypeChanged();
+
+        emit scanProgress(0);
+    }
+}
+
 #endif
 
 {
