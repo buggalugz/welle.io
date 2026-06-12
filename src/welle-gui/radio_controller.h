@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QScopedPointer>
 #include <memory>
-#include "../backend/radio_receiver.h" // Assuming this exists in your project
+#include "src/backend/radio_receiver.h" // Assuming this exists in your project
 #include "input_device.h"   // Assuming this exists
 
 class CRadioController : public QObject
