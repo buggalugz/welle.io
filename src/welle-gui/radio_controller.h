@@ -1,6 +1,7 @@
 #ifndef RADIO_CONTROLLER_H
 #define RADIO_CONTROLLER_H
 
+#include "../backend/radio_receiver.h"
 #include <QObject>
 #include <QVariant>
 #include <QVariantMap>
