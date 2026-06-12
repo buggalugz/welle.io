@@ -355,12 +355,12 @@ void CRTL_TCP_Client::sendVFO(int32_t frequency)
     sendCommand(0x01, static_cast<uint32_t>(frequency));
 }
 
-void CRTL_TCP_Client::sendRate(int32_t theRate)
+void CRTL_TCP_Client::sendRate(uint32_t theRate)
 {
     sendCommand(0x02, static_cast<uint32_t>(theRate));
 }
 
-void CRTL_TCP_Client::setGainMode(int32_t gainMode)
+void CRTL_TCP_Client::setGainMode(uint32_t gainMode)
 {
     sendCommand(0x03, static_cast<uint32_t>(gainMode));
 }
@@ -371,7 +371,7 @@ float CRTL_TCP_Client::getGain() const
     return currentGain;
 }
 
-float CRTL_TCP_Client::setGain(int32_t gain)
+float CRTL_TCP_Client::setGain(uint32_t gain)
 {
     currentGainCount = gain;
     float gainValue = getGainValue(gain);
