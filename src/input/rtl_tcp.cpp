@@ -89,7 +89,7 @@ CRTL_TCP_Client::~CRTL_TCP_Client(void)
 void CRTL_TCP_Client::setFrequency(int newFrequency)
 {
     frequency = newFrequency;
-    sendVFO(newFrequency);
+    sendVFO(static_cast<int32_t>(newFrequency));
 }
 
 int CRTL_TCP_Client::getFrequency() const
@@ -352,18 +352,19 @@ void CRTL_TCP_Client::sendCommand(uint8_t cmd, int32_t param)
 
 void CRTL_TCP_Client::sendVFO(int32_t frequency)
 {
-    sendCommand(0x01, frequency);
+    sendCommand(0x01, static_cast<uint32_t>(frequency));
 }
 
 void CRTL_TCP_Client::sendRate(int32_t theRate)
 {
-    sendCommand(0x02, theRate);
+    sendCommand(0x02, static_cast<uint32_t>(theRate));
 }
 
 void CRTL_TCP_Client::setGainMode(int32_t gainMode)
 {
-    sendCommand (0x03, gainMode);
+    sendCommand(0x03, static_cast<uint32_t>(gainMode));
 }
+
 
 float CRTL_TCP_Client::getGain() const
 {
