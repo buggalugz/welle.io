@@ -1,7 +1,7 @@
 #ifndef RADIO_CONTROLLER_H
 #define RADIO_CONTROLLER_H
 
-#include "../backend/radio_receiver.h"
+#include "backend/radio-receiver.h"
 #include <QObject>
 #include <QVariant>
 #include <QVariantMap>
@@ -9,8 +9,7 @@
 #include <QFile>
 #include <QScopedPointer>
 #include <memory>
-#include "src/backend/radio_receiver.h" // Assuming this exists in your project
-#include "input_device.h"   // Assuming this exists
+#include "input_device.h"
 
 class CRadioController : public QObject
 {
