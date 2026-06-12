@@ -132,7 +132,6 @@ private:
     void sendRate(uint32_t theRate);
     void setGainMode(uint32_t gainMode);
     void sendCommand(uint8_t cmd, uint32_t param);
-    float getGainValue(uint16_t gainCount);
 
 };
 
