@@ -350,17 +350,17 @@ void CRTL_TCP_Client::sendCommand(uint8_t cmd, int32_t param)
     sock.send(datagram.data(), datagram.size(), 0);
 }
 
-void CRTL_TCP_Client::sendVFO(int32_t frequency)
+void CRTL_TCP_Client::sendVFO(int frequency)
 {
     sendCommand(0x01, frequency);
 }
 
-void CRTL_TCP_Client::sendRate(int32_t theRate)
+void CRTL_TCP_Client::sendRate(int theRate)
 {
     sendCommand(0x02, theRate);
 }
 
-void CRTL_TCP_Client::setGainMode(int32_t gainMode)
+void CRTL_TCP_Client::setGainMode(int gainMode)
 {
     sendCommand (0x03, gainMode);
 }
