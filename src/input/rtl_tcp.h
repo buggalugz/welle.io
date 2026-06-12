@@ -67,7 +67,7 @@ public:
     float getGain(void) const;
     float setGain(int gain);
     int getGainCount();
-    float getGainValue(uint32_t gainCount);
+    float getGainValue(int gainCount);
 
     void setAgc(bool AGC);
     std::string getDescription(void);
