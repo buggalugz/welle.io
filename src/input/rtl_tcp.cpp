@@ -382,16 +382,18 @@ float CRTL_TCP_Client::setGain(uint32_t gain)
     return gainValue;
 }
 
-    uint32_t CRTL_TCP_Client::getGainCount()
+    int CRTL_TCP_Client::getGainCount()
 {
-    uint32_t MaxGainCount = 0;
+    int MaxGainCount = 0;
     switch (dongleInfo.tuner_type) {
-        case RTLSDR_TUNER_E4000: MaxGainCount = e4k_gains.size(); break;
-        case RTLSDR_TUNER_FC0012: MaxGainCount = fc0012_gains.size(); break;
-        case RTLSDR_TUNER_FC0013: MaxGainCount = fc0013_gains.size(); break;
-        case RTLSDR_TUNER_FC2580: MaxGainCount = fc2580_gains.size(); break;
-        case RTLSDR_TUNER_R820T: MaxGainCount = r82xx_gains.size(); break;
-        case RTLSDR_TUNER_R828D: MaxGainCount = r82xx_gains.size(); break;
+        case RTLSDR_TUNER_E4000: MaxGainCount = static_cast<int>(e4k_gains.size()); break;
+        case RTLSDR_TUNER_FC0012: MaxGainCount = static_cast<int>(fc0012_gains.size()); break;
+        case RTLSDR_TUNER_FC0013: MaxGainCount = static_cast<int>(fc0013_gains.size()); break;
+
+        case RTLSDR_TUNER_FC2580: MaxGainCount = static_cast<int>(fc2580_gains.size()); break;
+        case RTLSDR_TUNER_R820T: MaxGainCount = static_cast<int>(r820t_gains.size()); break;
+        case RTLSDR_TUNER_R828D: MaxGainCount = static_cast<int>(r828d_gains.size()); break;
+
         default: MaxGainCount = 29; // Most likely it is the R820T tuner
     }
 
