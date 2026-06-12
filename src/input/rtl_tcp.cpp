@@ -333,7 +333,7 @@ void CRTL_TCP_Client::handleDisconnect()
     sock.close();
 }
 
-void CRTL_TCP_Client::sendCommand(uint8_t cmd, int32_t param)
+void CRTL_TCP_Client::sendCommand(uint8_t cmd, uint32_t param)
 {
     if (!connected || !sock.valid()) {
         return;
