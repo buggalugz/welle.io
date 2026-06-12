@@ -382,9 +382,9 @@ float CRTL_TCP_Client::setGain(uint32_t gain)
     return gainValue;
 }
 
-int32_t CRTL_TCP_Client::getGainCount()
+    uint32_t CRTL_TCP_Client::getGainCount()
 {
-    int32_t MaxGainCount = 0;
+    uint32_t MaxGainCount = 0;
     switch (dongleInfo.tuner_type) {
         case RTLSDR_TUNER_E4000: MaxGainCount = e4k_gains.size(); break;
         case RTLSDR_TUNER_FC0012: MaxGainCount = fc0012_gains.size(); break;
