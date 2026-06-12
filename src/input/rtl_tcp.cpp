@@ -343,10 +343,10 @@ void CRTL_TCP_Client::sendCommand(uint8_t cmd, int32_t param)
 
     datagram.resize(5);
     datagram[0] = cmd; // command to set rate
-    datagram[4] = param & 0xFF;  //lsb last
-    datagram[3] = (param >> ONE_BYTE) & 0xFF;
-    datagram[2] = (param >> (2 * ONE_BYTE)) & 0xFF;
-    datagram[1] = (param >> (3 * ONE_BYTE)) & 0xFF;
+    datagram[4] = val & 0xFF;
+    datagram[3] = (val >> ONE_BYTE) & 0xFF;
+    datagram[2] = (val >> (2 * ONE_BYTE)) & 0xFF;
+    datagram[1] = (val >> (3 * ONE_BYTE)) & 0xFF;
     sock.send(datagram.data(), datagram.size(), 0);
 }
 
